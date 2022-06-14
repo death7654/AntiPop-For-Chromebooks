@@ -1,11 +1,17 @@
-// WindowsProject1.cpp : Defines the entry point for the application.
-//
 
 #include "framework.h"
 #include "WindowsProject1.h"
 #include "Windows.h"
 #include "MMsystem.h"
 #include "iostream"
+#include "shellapi.h"
+#include "resource.h"
+#include "conio.h"
+
+
+
+
+
 
 #define MAX_LOADSTRING 100
 
@@ -27,7 +33,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
+
+    //APP CODING BEGINS 
+   
+
+
+
+
+
     //volume setter
+
     DWORD dwVolume;
     if (waveOutGetVolume(NULL, &dwVolume) == MMSYSERR_NOERROR)
         waveOutSetVolume(NULL, 0.001); 
@@ -37,6 +52,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
      PlaySound(TEXT("sound.wav"), NULL, SND_FILENAME | SND_LOOP | SND_ASYNC);
   
+    //tray
+
+
+
+
+     
+         
+     
+
+
+
+
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -166,8 +193,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
+
+    //TRAY CASE
+     case WM_CLOSE:
+         
+         ShowWindow(hWnd, SW_HIDE);
+
+         NOTIFYICONDATAA nid = {};
+         AllocConsole();
+         HWND h = FindWindowA("ConsoleWindowClass", NULL);
+         ShowWindow(h, 0);
+
+         nid.cbSize = sizeof(nid);
+         nid.hWnd = h;
+         nid.uFlags = NIF_ICON | NIF_TIP | NIF_INFO;
+
+         nid.hIcon = (HICON)LoadImage(NULL, "small.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_SHARED);
+         memcpy(nid.szTip, "AntiPop", 128);
+         
+
+         Shell_NotifyIcon(NIM_ADD, &nid);
+
+
+     
+         break;
+
+    //tray end
     }
     return 0;
+   
 }
 
 // Message handler for about box.
